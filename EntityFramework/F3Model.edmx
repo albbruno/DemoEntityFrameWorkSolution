@@ -1,0 +1,335 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+  <!-- EF Runtime content -->
+  <edmx:Runtime>
+    <!-- SSDL content -->
+    <edmx:StorageModels>
+      <Schema Namespace="FastFoodFinderModel.Store" Provider="System.Data.SqlClient" ProviderManifestToken="2012" Alias="Self" xmlns:store="http://schemas.microsoft.com/ado/2007/12/edm/EntityStoreSchemaGenerator" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm/ssdl">
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'FastFoodFinder.dbo.last_location' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="last_location">
+          <Key>
+            <PropertyRef Name="user_id" />
+            <PropertyRef Name="location_id" />
+          </Key>
+          <Property Name="user_id" Type="int" Nullable="false" />
+          <Property Name="location_id" Type="int" Nullable="false" />
+        </EntityType>
+        <EntityType Name="location">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="longY" Type="bigint" />
+          <Property Name="longX" Type="bigint" />
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="unitNum" Type="varchar" MaxLength="10" />
+        </EntityType>
+        <EntityType Name="Restaurant">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="name" Type="varchar" MaxLength="100" />
+          <Property Name="location_id" Type="int" />
+        </EntityType>
+        <EntityType Name="sysdiagrams">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="nvarchar" MaxLength="128" Nullable="false" />
+          <Property Name="principal_id" Type="int" Nullable="false" />
+          <Property Name="diagram_id" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="version" Type="int" />
+          <Property Name="definition" Type="varbinary(max)" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="int" StoreGeneratedPattern="Identity" Nullable="false" />
+          <Property Name="email" Type="varchar" MaxLength="100" />
+          <Property Name="password" Type="varchar" MaxLength="100" />
+          <Property Name="name" Type="varchar" MaxLength="100" />
+          <Property Name="creditcard" Type="varchar" MaxLength="16" />
+        </EntityType>
+        <!--Errors Found During Generation:
+warning 6002: The table/view 'FastFoodFinder.dbo.user_favorites' does not have a primary key defined. The key has been inferred and the definition was created as a read-only table/view.-->
+        <EntityType Name="user_favorites">
+          <Key>
+            <PropertyRef Name="user_id" />
+            <PropertyRef Name="restaurant_id" />
+          </Key>
+          <Property Name="user_id" Type="int" Nullable="false" />
+          <Property Name="restaurant_id" Type="int" Nullable="false" />
+        </EntityType>
+        <Association Name="FK_LastLocation_Location">
+          <End Role="location" Type="Self.location" Multiplicity="1" />
+          <End Role="last_location" Type="Self.last_location" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="location">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="last_location">
+              <PropertyRef Name="location_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_LastLocation_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="last_location" Type="Self.last_location" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="last_location">
+              <PropertyRef Name="user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_Restaurant_Location">
+          <End Role="location" Type="Self.location" Multiplicity="0..1" />
+          <End Role="Restaurant" Type="Self.Restaurant" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="location">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Restaurant">
+              <PropertyRef Name="location_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserFavorites_Restaurant">
+          <End Role="Restaurant" Type="Self.Restaurant" Multiplicity="1" />
+          <End Role="user_favorites" Type="Self.user_favorites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="Restaurant">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="user_favorites">
+              <PropertyRef Name="restaurant_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="FK_UserFavorites_User">
+          <End Role="User" Type="Self.User" Multiplicity="1" />
+          <End Role="user_favorites" Type="Self.user_favorites" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="User">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="user_favorites">
+              <PropertyRef Name="user_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <EntityContainer Name="FastFoodFinderModelStoreContainer">
+          <EntitySet Name="location" EntityType="Self.location" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="Restaurant" EntityType="Self.Restaurant" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagrams" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="User" EntityType="Self.User" Schema="dbo" store:Type="Tables" />
+          <EntitySet Name="last_location" EntityType="Self.last_location" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [last_location].[user_id] AS [user_id], 
+    [last_location].[location_id] AS [location_id]
+    FROM [dbo].[last_location] AS [last_location]</DefiningQuery>
+          </EntitySet>
+          <EntitySet Name="user_favorites" EntityType="Self.user_favorites" store:Type="Tables" store:Schema="dbo">
+            <DefiningQuery>SELECT 
+    [user_favorites].[user_id] AS [user_id], 
+    [user_favorites].[restaurant_id] AS [restaurant_id]
+    FROM [dbo].[user_favorites] AS [user_favorites]</DefiningQuery>
+          </EntitySet>
+          <AssociationSet Name="FK_LastLocation_Location" Association="Self.FK_LastLocation_Location">
+            <End Role="location" EntitySet="location" />
+            <End Role="last_location" EntitySet="last_location" />
+          </AssociationSet>
+          <AssociationSet Name="FK_LastLocation_User" Association="Self.FK_LastLocation_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="last_location" EntitySet="last_location" />
+          </AssociationSet>
+          <AssociationSet Name="FK_Restaurant_Location" Association="Self.FK_Restaurant_Location">
+            <End Role="location" EntitySet="location" />
+            <End Role="Restaurant" EntitySet="Restaurant" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserFavorites_Restaurant" Association="Self.FK_UserFavorites_Restaurant">
+            <End Role="Restaurant" EntitySet="Restaurant" />
+            <End Role="user_favorites" EntitySet="user_favorites" />
+          </AssociationSet>
+          <AssociationSet Name="FK_UserFavorites_User" Association="Self.FK_UserFavorites_User">
+            <End Role="User" EntitySet="User" />
+            <End Role="user_favorites" EntitySet="user_favorites" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:StorageModels>
+    <!-- CSDL content -->
+    <edmx:ConceptualModels>
+      <Schema Namespace="FastFoodFinderModel" Alias="Self" annotation:UseStrongSpatialTypes="false" xmlns:annotation="http://schemas.microsoft.com/ado/2009/02/edm/annotation" xmlns:customannotation="http://schemas.microsoft.com/ado/2013/11/edm/customannotation" xmlns="http://schemas.microsoft.com/ado/2009/11/edm">
+        <EntityType Name="location">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="longY" Type="Int64" />
+          <Property Name="longX" Type="Int64" />
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="unitNum" Type="String" MaxLength="10" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="Restaurants" Relationship="Self.FK_Restaurant_Location" FromRole="location" ToRole="Restaurant" />
+          <NavigationProperty Name="Users" Relationship="Self.last_location" FromRole="location" ToRole="User" />
+        </EntityType>
+        <EntityType Name="Restaurant">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="location_id" Type="Int32" />
+          <NavigationProperty Name="location" Relationship="Self.FK_Restaurant_Location" FromRole="Restaurant" ToRole="location" />
+          <NavigationProperty Name="Users" Relationship="Self.user_favorites" FromRole="Restaurant" ToRole="User" />
+        </EntityType>
+        <EntityType Name="sysdiagram">
+          <Key>
+            <PropertyRef Name="diagram_id" />
+          </Key>
+          <Property Name="name" Type="String" MaxLength="128" FixedLength="false" Unicode="true" Nullable="false" />
+          <Property Name="principal_id" Type="Int32" Nullable="false" />
+          <Property Name="diagram_id" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="version" Type="Int32" />
+          <Property Name="definition" Type="Binary" MaxLength="Max" FixedLength="false" />
+        </EntityType>
+        <EntityType Name="User">
+          <Key>
+            <PropertyRef Name="ID" />
+          </Key>
+          <Property Name="ID" Type="Int32" Nullable="false" annotation:StoreGeneratedPattern="Identity" />
+          <Property Name="email" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="password" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="name" Type="String" MaxLength="100" FixedLength="false" Unicode="false" />
+          <Property Name="creditcard" Type="String" MaxLength="16" FixedLength="false" Unicode="false" />
+          <NavigationProperty Name="locations" Relationship="Self.last_location" FromRole="User" ToRole="location" />
+          <NavigationProperty Name="Restaurants" Relationship="Self.user_favorites" FromRole="User" ToRole="Restaurant" />
+        </EntityType>
+        <Association Name="FK_Restaurant_Location">
+          <End Role="location" Type="Self.location" Multiplicity="0..1" />
+          <End Role="Restaurant" Type="Self.Restaurant" Multiplicity="*" />
+          <ReferentialConstraint>
+            <Principal Role="location">
+              <PropertyRef Name="ID" />
+            </Principal>
+            <Dependent Role="Restaurant">
+              <PropertyRef Name="location_id" />
+            </Dependent>
+          </ReferentialConstraint>
+        </Association>
+        <Association Name="last_location">
+          <End Role="location" Type="Self.location" Multiplicity="*" />
+          <End Role="User" Type="Self.User" Multiplicity="*" />
+        </Association>
+        <Association Name="user_favorites">
+          <End Role="Restaurant" Type="Self.Restaurant" Multiplicity="*" />
+          <End Role="User" Type="Self.User" Multiplicity="*" />
+        </Association>
+        <EntityContainer Name="FastFoodFinderEntities" annotation:LazyLoadingEnabled="true">
+          <EntitySet Name="locations" EntityType="Self.location" />
+          <EntitySet Name="Restaurants" EntityType="Self.Restaurant" />
+          <EntitySet Name="sysdiagrams" EntityType="Self.sysdiagram" />
+          <EntitySet Name="Users" EntityType="Self.User" />
+          <AssociationSet Name="FK_Restaurant_Location" Association="Self.FK_Restaurant_Location">
+            <End Role="location" EntitySet="locations" />
+            <End Role="Restaurant" EntitySet="Restaurants" />
+          </AssociationSet>
+          <AssociationSet Name="last_location" Association="Self.last_location">
+            <End Role="location" EntitySet="locations" />
+            <End Role="User" EntitySet="Users" />
+          </AssociationSet>
+          <AssociationSet Name="user_favorites" Association="Self.user_favorites">
+            <End Role="Restaurant" EntitySet="Restaurants" />
+            <End Role="User" EntitySet="Users" />
+          </AssociationSet>
+        </EntityContainer>
+      </Schema>
+    </edmx:ConceptualModels>
+    <!-- C-S mapping content -->
+    <edmx:Mappings>
+      <Mapping Space="C-S" xmlns="http://schemas.microsoft.com/ado/2009/11/mapping/cs">
+        <EntityContainerMapping StorageEntityContainer="FastFoodFinderModelStoreContainer" CdmEntityContainer="FastFoodFinderEntities">
+          <EntitySetMapping Name="locations">
+            <EntityTypeMapping TypeName="FastFoodFinderModel.location">
+              <MappingFragment StoreEntitySet="location">
+                <ScalarProperty Name="longY" ColumnName="longY" />
+                <ScalarProperty Name="longX" ColumnName="longX" />
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="unitNum" ColumnName="unitNum" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Restaurants">
+            <EntityTypeMapping TypeName="FastFoodFinderModel.Restaurant">
+              <MappingFragment StoreEntitySet="Restaurant">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="location_id" ColumnName="location_id" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="sysdiagrams">
+            <EntityTypeMapping TypeName="FastFoodFinderModel.sysdiagram">
+              <MappingFragment StoreEntitySet="sysdiagrams">
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="principal_id" ColumnName="principal_id" />
+                <ScalarProperty Name="diagram_id" ColumnName="diagram_id" />
+                <ScalarProperty Name="version" ColumnName="version" />
+                <ScalarProperty Name="definition" ColumnName="definition" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <EntitySetMapping Name="Users">
+            <EntityTypeMapping TypeName="FastFoodFinderModel.User">
+              <MappingFragment StoreEntitySet="User">
+                <ScalarProperty Name="ID" ColumnName="ID" />
+                <ScalarProperty Name="email" ColumnName="email" />
+                <ScalarProperty Name="password" ColumnName="password" />
+                <ScalarProperty Name="name" ColumnName="name" />
+                <ScalarProperty Name="creditcard" ColumnName="creditcard" />
+              </MappingFragment>
+            </EntityTypeMapping>
+          </EntitySetMapping>
+          <AssociationSetMapping Name="last_location" TypeName="FastFoodFinderModel.last_location" StoreEntitySet="last_location">
+            <EndProperty Name="location">
+              <ScalarProperty Name="ID" ColumnName="location_id" />
+            </EndProperty>
+            <EndProperty Name="User">
+              <ScalarProperty Name="ID" ColumnName="user_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+          <AssociationSetMapping Name="user_favorites" TypeName="FastFoodFinderModel.user_favorites" StoreEntitySet="user_favorites">
+            <EndProperty Name="Restaurant">
+              <ScalarProperty Name="ID" ColumnName="restaurant_id" />
+            </EndProperty>
+            <EndProperty Name="User">
+              <ScalarProperty Name="ID" ColumnName="user_id" />
+            </EndProperty>
+          </AssociationSetMapping>
+        </EntityContainerMapping>
+      </Mapping>
+    </edmx:Mappings>
+  </edmx:Runtime>
+  <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <Connection>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="MetadataArtifactProcessing" Value="EmbedInOutputAssembly" />
+      </DesignerInfoPropertySet>
+    </Connection>
+    <Options>
+      <DesignerInfoPropertySet>
+        <DesignerProperty Name="ValidateOnBuild" Value="true" />
+        <DesignerProperty Name="EnablePluralization" Value="true" />
+        <DesignerProperty Name="IncludeForeignKeysInModel" Value="true" />
+        <DesignerProperty Name="UseLegacyProvider" Value="false" />
+        <DesignerProperty Name="CodeGenerationStrategy" Value="None" />
+      </DesignerInfoPropertySet>
+    </Options>
+    <!-- Diagram content (shape and connector positions) -->
+    <Diagrams></Diagrams>
+  </Designer>
+</edmx:Edmx>
